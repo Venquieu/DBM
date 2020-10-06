@@ -29,7 +29,8 @@ while True:
         count = 0
         for  user in users:
             print('---------------------------')
-            print('于{}开始为用户{}填报...'.format(localtime,user['account']))
+            lt = time.asctime(time.localtime(time.time()))
+            print('于{}开始为用户{}填报...'.format(lt,user['account']))
             helper = JLU_Helper(user,key_words,pause_time=pause_time)
             helper.login()
             time.sleep(4*pause_time)
@@ -41,7 +42,9 @@ while True:
             time.sleep(t) #wait for 30-60s
         last_hour = localtime_hour
         is_finished = True
-        print('本次填报已完成！完成于',localtime)
+        lt = time.asctime(time.localtime(time.time()))
+        print('本次填报已完成！完成于',lt)
         print('共有{}个用户，{}人打卡成功'.format(len(users),count))
-    print('当前时间是{},休眠5分钟...'.format(localtime))
+    lt = time.asctime(time.localtime(time.time()))
+    print('当前时间是{},休眠5分钟...'.format(lt))
     time.sleep(300) #scan per 5min
