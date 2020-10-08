@@ -23,9 +23,8 @@ while True:
     if (not is_finished) and (7<=localtime_hour<8 or 11<=localtime_hour<12 or \
         17<=localtime_hour<18 or 21<=localtime_hour<22):
         t = random.randint(1,6)#wait for 1-5min
-        print('{}min后将进行填报...'.format(t))
+        print('当前时间是{}，{}min后将进行填报，请稍侯...'.format(localtime,t))
         time.sleep(60*t)
-        print('当前时间是{}，自动填报中，请稍侯...'.format(localtime))
         count = 0
         for  user in users:
             print('---------------------------')
@@ -33,7 +32,7 @@ while True:
             print('于{}开始为用户{}填报...'.format(lt,user['account']))
             helper = JLU_Helper(user,key_words,pause_time=pause_time)
             helper.login()
-            time.sleep(4*pause_time)
+            time.sleep(2*pause_time)
             helper.auto_fill_in()
             if helper.status: #user status
                 count += 1
