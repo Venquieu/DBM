@@ -84,12 +84,12 @@ class JLU_Helper:
             print(len(elements))  # should be 3
             assert len(elements) == 3,"Didn't find enough selection"
             kw = ['province','city','area']
-            i = 0
-            for element in elements:
+            for i in range(len(elements)):
+                element = elements[i]
                 element.send_keys(self.__user[kw[i]])
                 time.sleep(self.__pause_time)
                 element.send_keys(Keys.ENTER)
-                i += 1
+                time.sleep(self.__pause_time)
 
             #address
             pf = self.browser.find_element_by_id('V1_CTRL39')
@@ -108,7 +108,9 @@ class JLU_Helper:
         elif self.__user['degree'] == '博士':
             self.browser.find_element_by_id('V1_CTRL45').click()
         else:
-            print('用户{}学位错误，打卡失败，怕不是个本科生噢'.format(self.__user['account']))
+            print('--------------------------')
+            print('用户{}学位错误，打卡失败'.format(self.__user['account']))
+            print('--------------------------')
             self.status = False
             return
         time.sleep(self.__pause_time)
@@ -140,9 +142,9 @@ class JLU_Helper:
         try:
             __ = self.browser.get(self.__request_url) #connect to fill_in site
         except:
-            print('---------------')
+            print('--------------------------')
             print('网络连接已断开！用户{}打卡失败'.format(self.__user['account']))
-            print('---------------')
+            print('--------------------------')
             self.status = False
             return
         try:
@@ -187,10 +189,11 @@ class JLU_Helper:
         try:
             __ = self.browser.find_element_by_xpath("//div[contains(text(),'{}')]".format(kw[4]))#'Done successfully!'
         except:
-            print('==================')
+            print('--------------------------')
             print('用户{}打卡失败！'.format(self.__user['account']))
-            print('==================')
+            print('--------------------------')
             self.status = False
+            return
         if self.status:
             print('用户{}办理成功！'.format(self.__user['account']))
         self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[5])).click() #Ok
