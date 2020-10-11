@@ -16,7 +16,26 @@ DBM制作了一个自动打卡工具，用户只需设置好自己的信息并�
 - python 编译器
 - python包 selenium
 - Chrome浏览器(目前仅支持Chrome浏览器)
-- chromedriver
+- 与Chrome浏览器版本一致的chromedriver
+
+### chromedriver版本选择
+
+chromedriver[下载地址](http://chromedriver.storage.googleapis.com/index.html)
+
+详细的chromedriver与chrome的对应关系可参考[notes](http://chromedriver.storage.googleapis.com/2.46/notes.txt)，这里给出部分常用的版本对应关系：
+
+| **chromedriver版本** | **支持的Chrome版本** |
+| -------------------- | -------------------- |
+| v2.46                | v71-73               |
+| v2.45                | v70-72               |
+| v2.44                | v69-71               |
+| v2.43                | v69-71               |
+| v2.42                | v68-70               |
+
+同时还有一些与Chrome版本号相同的chromedriver也可供选择。
+
+chromedriver选择应尽可能与Chrome浏览器版本一致，否则可能会出现网页不能正常连接的情况。
+
 ### Windows
 
 1. python安装方法自行百度，推荐到[python官网](https://www.python.org/downloads/)下载安装
@@ -25,7 +44,7 @@ DBM制作了一个自动打卡工具，用户只需设置好自己的信息并�
 
 3. 打开Chrome浏览器，在设置—>关于Chrome 中查看浏览器版本
 
-4. 下载与浏览器版本一致的[chromedriver](http://chromedriver.storage.googleapis.com/index.html)，没有完全一致的话就下载最接近的；
+4. 下载与浏览器版本一致的[chromedriver](http://chromedriver.storage.googleapis.com/index.html)；
 
 5. 将下载解压的```chromedriver.exe```放在[python安装目录]\Scripts目录中。
 
@@ -37,7 +56,7 @@ DBM制作了一个自动打卡工具，用户只需设置好自己的信息并�
 pip install selenium
 ```
 
-2. 打开Chrome浏览器查看浏览器版本，下载与浏览器版本一致的[chromedriver](http://chromedriver.storage.googleapis.com/index.html)，没有完全一致的话就下载最接近的；
+2. 打开Chrome浏览器查看浏览器版本，下载与浏览器版本一致的[chromedriver](http://chromedriver.storage.googleapis.com/index.html)；
 
 3. 解压后将chromedriver文件所在路径加到环境变量中。打开用户根目录下的.bash_profile文件，在最后添加```export PATH=$PATH:[chromedriver所在目录]```，保存后退出即可。
 
@@ -47,7 +66,6 @@ pip install selenium
    source ~/.bash_profile
    ```
 
-   
 
 ### Linux
 
@@ -58,7 +76,7 @@ pip install selenium #安装selenium
 google-chrome --version #查看chrome浏览器版本
 ```
 
-2. 下载与浏览器版本一致的[chromedriver](http://chromedriver.storage.googleapis.com/index.html)，没有完全一致的话就下载最接近的；
+2. 下载与浏览器版本一致的[chromedriver](http://chromedriver.storage.googleapis.com/index.html)；
 
 3. 解压后将chromedriver文件所在路径加到环境变量中。打开用户根目录下的.bashrc文件，在最后添加```export PATH="[chromedriver所在目录]:$PATH"```，保存后退出即可。
 
@@ -108,4 +126,8 @@ users = [
 2. UserSetting.py中的```pause_time```表示每次操作后的停顿时间，默认为1s，用户可根据偏好或需求自行调整
 
 3. 在python编译器或在命令行运行main.py，注意查看输出信息显示自己是否打卡成功。使用过程中有可能会因为网络中断、网站改版等原因打卡失败。
+
+## 注
+
+因可能存在的运行问题及优化需求，本项目不定时更新，请及时关注[GitHub主页](https://github.com/Venquieu/DBM)获取最新版本。
 
