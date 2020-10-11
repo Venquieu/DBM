@@ -28,18 +28,37 @@ class JLU_Helper:
         self.browser.implicitly_wait(10)
         self.__wait = WebDriverWait(self.browser, 30) #time out :30s
 
-
     #login to ehall
     def login(self):
         # open login url
         try:
             self.browser.get(self.__login_url)
+            time.sleep(self.__pause_time)
         except: #failed to connect to Internet
             print('--------------------------------')
             print('网络连接失败！用户{}未能登录'.format(self.__user['account']))
             print('--------------------------------')
             self.status = False
             return
+        
+        # check if the web page open normally
+        for i in range(11):
+            if self.browser.find_elements_by_name('username') == []:
+                print('--------------------------------')
+                print('网页显示异常！第{}次重连中...'.format(i))
+                print('--------------------------------')
+                self.browser.refresh()
+                if (i+1)%4 == 0:
+                    self.browser.get(self.__login_url)
+            else:
+                break
+            if i == 10:
+                print('--------------------------------')
+                print('网页重连失败！用户{}未能登录'.format(self.__user['account']))
+                print('--------------------------------')
+                self.status = False
+                self.browser.quit()
+                return
         # adaptively waiting, input account
         self.browser.find_element_by_name('username').send_keys(self.__user['account'])
         # adaptively waiting,input password
@@ -53,6 +72,7 @@ class JLU_Helper:
             print('用户{}登录失败！请重试'.format(self.__user['account']))
             print('--------------------------')
             self.status = False
+            self.browser.quit()
         #otherwise login successful
         if self.status:
             print('用户{}登录成功!'.format(self.__user['account']))
@@ -112,6 +132,7 @@ class JLU_Helper:
             print('用户{}学位错误，打卡失败'.format(self.__user['account']))
             print('--------------------------')
             self.status = False
+            self.browser.quit()
             return
         time.sleep(self.__pause_time)
         #body temperature
@@ -146,6 +167,7 @@ class JLU_Helper:
             print('网络连接已断开！用户{}打卡失败'.format(self.__user['account']))
             print('--------------------------')
             self.status = False
+            self.browser.quit()
             return
         try:
             __ = self.browser.find_element_by_xpath("//b[contains(text(),'您')]")
@@ -166,9 +188,10 @@ class JLU_Helper:
             self.fill_in_night()
         else: # later for fill in
             print('---------------------------------')
-            print('||啊偶！用户{}打卡迟到了(´༎ຶٹ༎ຶ`)||'.format(self.__user['account']))
+            print('啊偶！用户{}打卡迟到了(´༎ຶٹ༎ຶ`)'.format(self.__user['account']))
             print('---------------------------------')
             self.status = False
+            self.browser.quit()
             return
         time.sleep(self.__pause_time)
         self.browser.find_element_by_class_name('command_button_content').click()
@@ -193,9 +216,14 @@ class JLU_Helper:
             print('用户{}打卡失败！'.format(self.__user['account']))
             print('--------------------------')
             self.status = False
+            self.browser.quit()
             return
         if self.status:
             print('用户{}办理成功！'.format(self.__user['account']))
-        self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[5])).click() #Ok
+        try:
+            self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[5])).click() #Ok
+        except:
+            print('Warning:确认异常!')
+            return
         time.sleep(4*self.__pause_time)
         self.browser.quit() #quit the browser
