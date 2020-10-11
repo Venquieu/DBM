@@ -27,7 +27,7 @@ while True:
         time.sleep(60*t)
         count = 0
         for  user in users:
-            print('---------------------------')
+            print('**************************************************')
             lt = time.asctime(time.localtime(time.time()))
             print('于{}开始为用户{}填报...'.format(lt,user['account']))
             helper = JLU_Helper(user,key_words,pause_time=pause_time)
@@ -36,9 +36,10 @@ while True:
             helper.auto_fill_in()
             if helper.status: #user status
                 count += 1
-            t = random.randint(30,60)
-            print('稍等{}s...'.format(t))
-            time.sleep(t) #wait for 30-60s
+            if user != users[-1]:
+                t = random.randint(30,60)
+                print('稍等{}s...'.format(t))
+                time.sleep(t) #wait for 30-60s
         last_hour = localtime_hour
         is_finished = True
         lt = time.asctime(time.localtime(time.time()))
