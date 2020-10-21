@@ -2,8 +2,11 @@
 # @data:   2020/10/3
 # @brief:  define user information&settings
 
-# 停顿单位时长
+# 操作停顿单位时长
 pause_time = 1
+
+#相邻用户打卡时间间隔的数值范围
+interval_time = [20,50]
 
 # 在这里输入用户信息
 users = [

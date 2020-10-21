@@ -22,7 +22,7 @@ while True:
         is_finished = False  #wait for next time
     if (not is_finished) and (7<=localtime_hour<8 or 11<=localtime_hour<12 or \
         17<=localtime_hour<18 or 21<=localtime_hour<22):
-        t = random.randint(1,6)#wait for 1-5min
+        t = random.randint(1,5)#wait for 1-5min
         print('当前时间是{}，{}min后将进行填报，请稍侯...'.format(localtime,t))
         time.sleep(60*t)
         count = 0
@@ -37,9 +37,9 @@ while True:
             if helper.status: #user status
                 count += 1
             if user != users[-1]:
-                t = random.randint(30,60)
+                t = random.randint(interval_time[0],interval_time[1])
                 print('稍等{}s...'.format(t))
-                time.sleep(t) #wait for 30-60s
+                time.sleep(t) #wait for 20-50s by default
         last_hour = localtime_hour
         is_finished = True
         lt = time.asctime(time.localtime(time.time()))
