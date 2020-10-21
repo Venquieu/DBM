@@ -101,7 +101,6 @@ class JLU_Helper:
         if self.__user['apartment'] == '校外居住':
             #province
             elements = self.browser.find_elements_by_xpath("//input[contains(@id,'_activeInput')]")
-            print(len(elements))  # should be 3
             assert len(elements) == 3,"Didn't find enough selection"
             kw = ['province','city','area']
             for i in range(len(elements)):
@@ -195,7 +194,7 @@ class JLU_Helper:
             return
         time.sleep(self.__pause_time)
         self.browser.find_element_by_class_name('command_button_content').click()
-        time.sleep(self.__pause_time)
+        time.sleep(2*self.__pause_time)
         try: #ensure all info is filled
             __ = self.browser.find_element_by_xpath("//span[contains(text(),'{}')]".format(kw[1])) #'If you have anything to comment,please click'
         except: #normal
@@ -205,18 +204,19 @@ class JLU_Helper:
             #refill the degree,when a user submit with phone in the morning while use DBM in the rest time
             time.sleep(self.__pause_time)
             self.browser.find_element_by_class_name('command_button_content').click()
+            time.sleep(self.__pause_time)
 
         self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[3])).click() #Ok
         time.sleep(self.__pause_time)
 
         try:
             __ = self.browser.find_element_by_xpath("//div[contains(text(),'{}')]".format(kw[4]))#'Done successfully!'
+            time.sleep(self.__pause_time)
         except:
             print('--------------------------')
-            print('用户{}打卡失败！'.format(self.__user['account']))
+            print('用户{}因不明原因办理失败！'.format(self.__user['account']))
             print('--------------------------')
             self.status = False
-            self.browser.quit()
             return
         if self.status:
             print('用户{}办理成功！'.format(self.__user['account']))
