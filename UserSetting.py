@@ -1,4 +1,4 @@
-# @author: Ven
+﻿# @author: Ven
 # @data:   2020/10/3
 # @brief:  define user information&settings
 
@@ -7,6 +7,11 @@ pause_time = 1
 
 #相邻用户打卡时间间隔的数值范围
 interval_time = [20,50]
+
+#网页显示异常时重试次数
+re_login = 4 #重新登录
+re_connect = 4 #重新进入打卡页面
+re_submit = 3 #重新提交
 
 # 在这里输入用户信息
 users = [
