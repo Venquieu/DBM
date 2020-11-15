@@ -6,30 +6,29 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait,Select
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException,NoSuchElementException
 import time
 
 class JLU_Helper:
     '''
     class JLU_Helper is the backbone of DBM,which can help guaduate students in JLU fill in&submit the system automatically
     '''
-    def __init__(self,user_data,key_words,pause_time = 1,retry = [10,10,3]):
+    def __init__(self,user_data,key_words,pause_time = 1):
         self.__login_url = 'https://ehall.jlu.edu.cn/jlu_portal/index'
         self.__request_url = 'https://ehall.jlu.edu.cn/infoplus/form/YJSMRDK/start'
         self.__user = user_data
         self.__kw = key_words
         self.__pause_time = pause_time
         self.__language = 'Chinese'
-        self.__retry = retry
         self.status = True
         options = webdriver.ChromeOptions()
         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2}) # Don't load images to ensure a high speed
         options.add_experimental_option('excludeSwitches', ['enable-automation']) # set to developer mode to avoid recognised
 
         self.browser = webdriver.Chrome(options=options)
-        self.browser.set_page_load_timeout(60)
-        self.browser.set_script_timeout(60)
-        self.browser.implicitly_wait(65)
+        self.browser.set_page_load_timeout(30)
+        self.browser.set_script_timeout(30)
+        self.browser.implicitly_wait(32)
 
     #login to ehall
     def login(self):
@@ -38,28 +37,19 @@ class JLU_Helper:
             self.browser.get(self.__login_url)
             time.sleep(self.__pause_time)
         except: #failed to connect to Internet
-            print('Error:网络连接失败！用户{}未能登录'.format(self.__user['account']))
+            print('Error:登录页面连接异常,用户{}登录失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
         
         # check if the web page open normally
-        re_login = self.__retry[0]
-        for i in range(re_login):
-            confirm = self.browser.find_elements_by_name('username')
-            #self.browser.implicitly_wait(20)
-            #print(confirm)
-            if confirm == []:#find_elements_by_name('username')
-                print('Warning:页面登陆显示异常！第{}次重连中...'.format(i+1))
-                self.browser.refresh()
-                if (i+1)%3 == 0:
-                    try:
-                        self.browser.get(self.__login_url)
-                    except TimeoutException:
-                        print('Warning:刷新网页仍然异常...')
-                time.sleep(self.__pause_time)
-            else:
-                break
+        try:
+            __ = self.browser.find_element_by_xpath("//title[contains(text(),'统一身份认证')]")
+        except : #Not find 
+            print('Error:登录页面显示异常,用户{}登录失败'.format(self.__user['account']))
+            self.status = False
+            self.browser.quit()
+            return
                 
         # adaptively waiting, input account
         self.browser.find_element_by_name('username').send_keys(self.__user['account'])
@@ -67,16 +57,17 @@ class JLU_Helper:
         self.browser.find_element_by_name('password').send_keys(self.__user['pw'])
         # adaptively waiting, submit to login
         try:
-            self.browser.find_element_by_name('login_submit').click()
+            login_submit = self.browser.find_element_by_name('login_submit')
+            login_submit.click()
         except TimeoutException:
-            print('Error:网页响应超时，用户{}登录失败'.format(self.__user['account']))
+            print('Error:登录系统响应超时，用户{}登录失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
         try:
             __ = self.browser.find_element_by_xpath("//title[contains(text(),'吉林大学')]")
         except : #Not find 
-            print('Error:用户{}登录失败！请核查账户密码'.format(self.__user['account']))
+            print('Error:登录系统显示异常,用户{}登录失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
@@ -164,30 +155,18 @@ class JLU_Helper:
         try:
             self.browser.get(self.__request_url) #connect to fill_in site
         except:
-            print('Error:网络连接已断开！用户{}打卡失败'.format(self.__user['account']))
+            print('Error:打卡页面连接异常,用户{}打卡失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
 
-        re_connect = self.__retry[1]
-        for i in range(re_connect):
-            confirm = self.browser.find_elements_by_xpath("//title[contains(text(),'研究生每日打卡')]")
-            if confirm == []:
-                print('Warning:打卡页面显示异常！第{}次重连中...'.format(i+1))
-                self.browser.refresh()
-                if (i+1)%3 == 0:
-                    try:
-                        self.browser.get(self.__request_url)
-                    except TimeoutException:
-                        print('Warning:刷新网页仍然异常...')
-                time.sleep(self.__pause_time)
-            else:
-                break
-            if i == re_connect-1:
-                print('Error:打卡页面重连失败！用户{}未能登录'.format(self.__user['account']))
-                self.status = False
-                self.browser.quit()
-                return
+        try:
+            __ = self.browser.find_element_by_xpath("//title[contains(text(),'研究生每日打卡')]")
+        except TimeoutException:
+            print('Error:打卡页面显示异常,用户{}登录失败'.format(self.__user['account']))
+            self.status = False
+            self.browser.quit()
+            return
 
         try:
             __ = self.browser.find_element_by_xpath("//b[contains(text(),'您')]")
@@ -208,23 +187,44 @@ class JLU_Helper:
             self.browser.quit()
             return
         time.sleep(self.__pause_time)
-        self.browser.find_element_by_class_name('command_button_content').click()
+        try:
+            submit = self.browser.find_element_by_class_name('command_button_content')
+            submit.click()
+        except:
+            print('打卡页面加载超时，用户{}打卡失败'.format(self.__user['account']))
+            self.status = False
+            self.browser.quit()
+            return
         time.sleep(2*self.__pause_time)
+
         try: #ensure all info is filled
             __ = self.browser.find_element_by_xpath("//span[contains(text(),'{}')]".format(kw[1])) #'If you have anything to comment,please click'
         except: #abnormal
-            print('Warning:信息不完整，正在补充...')
-            self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[2])).click() #'Ok'
-            self.fill_in_morning()
-            #refill the degree,when a user submit with phone in the morning while use DBM in the rest time
-            time.sleep(self.__pause_time)
-            self.browser.find_element_by_class_name('command_button_content').click()
-            time.sleep(self.__pause_time)
+            try:
+                _ = self.browser.find_element_by_xpath("//div[contains(text(),'This field is required')]")
+                print('Warning:信息不完整，正在补充...')
+                self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[2])).click() #'Ok'
+                self.fill_in_morning()
+                #refill the degree,when a user submit with phone in the morning while use DBM in the rest time
+                time.sleep(self.__pause_time)
+            except NoSuchElementException:
+                print('Warning:提交显示异常，刷新页面...')
+                self.browser.refresh()
+                time.sleep(self.__pause_time)
             
-        try: #ensure all info is filled
+            try:
+                self.browser.find_element_by_class_name('command_button_content').click()
+                time.sleep(self.__pause_time)
+            except NoSuchElementException:
+                print('Error:提交显示异常,用户{}打卡失败'.format(self.__user['account']))
+                self.status = False
+                self.browser.quit()
+                return
+
+        try: #still have problem
             __ = self.browser.find_element_by_xpath("//span[contains(text(),'{}')]".format(kw[1])) #'If you have anything to comment,please click'
         except: #abnormal
-            print('Error:提交显示异常1，问题待核查...')
+            print('Error:提交时加载超时,用户{}打卡失败'.format(self.__user['account']))
             self.status = False
             return
         self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[3])).click() #Ok
@@ -234,16 +234,17 @@ class JLU_Helper:
             __ = self.browser.find_element_by_xpath("//div[contains(text(),'{}')]".format(kw[4]))#'Done successfully!'
             time.sleep(self.__pause_time)
         except: #Submission fail
-            print('Error:提交显示异常2，问题待核查...')
+            print('Error:提交确认时加载超时,用户{}打卡失败'.format(self.__user['account']))
             self.status = False
             return
 
         if self.status:
             print('用户{}办理成功！'.format(self.__user['account']))
         try:
-            self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[5])).click() #Ok
+            confirm = self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[5])) #Ok
+            confirm.click()
         except:
-            print('Warning:确认异常!')
+            print('Warning:确认异常')
             return
         time.sleep(4*self.__pause_time)
         self.browser.quit() #quit the browser

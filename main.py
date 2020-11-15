@@ -12,7 +12,7 @@ key_words = {
     'Chinese':['登录成功','如有其它相关说明，请点击','确定','好','办理成功','确定'],
     'English':['登录成功','If you have anything to comment,please click','Ok','Ok','Done successfully!','Ok']
 }
-redo = [re_login,re_connect,re_submit]
+
 
 def timer(only_hour = False):
     '''return local time'''
@@ -30,7 +30,7 @@ def is_filling_time(local_hour):
 
 def filling_process(user_info):
     '''filling process for user'''
-    helper = JLU_Helper(user_info,key_words,pause_time=pause_time,retry = redo)
+    helper = JLU_Helper(user_info,key_words,pause_time=pause_time)
     helper.login()
     time.sleep(2*pause_time)
     helper.auto_fill_in()
@@ -39,7 +39,7 @@ def filling_process(user_info):
 def main():
     parser = argparse.ArgumentParser(description="JLU helper keeps bothers away from you.")
     parser.add_argument(
-        "--skip",  #fill in from scratch
+        "--skip_wait",  #fill in from scratch
         action='store_true',
         default=False,
     )
@@ -49,7 +49,7 @@ def main():
         default=True,
     )
     args = parser.parse_args()
-    is_finished = args.skip
+    is_finished = args.skip_wait
     wait = args.do_now
     while True:
         localtime_hour = timer(only_hour=True)
@@ -69,12 +69,11 @@ def main():
             while len(user_list) > 0 and is_filling_time(timer(only_hour=True)):
                 batch += 1
                 failed_list = []
-                print('######################################################')
+                print('==================================================')
                 print('为用户进行第{}批填报，本批次共{}个用户'.format(batch,len(user_list)))
                 for  user in user_list:
                     print('**************************************************')
                     lt = timer()
-                    user = users[-1]
                     print('于{}开始为用户{}填报...'.format(lt,user['account']))
                     status = filling_process(user)
                     if status: #user status
@@ -82,7 +81,7 @@ def main():
                     else:
                         failed_list.append(user)
 
-                    if user != users[-1] or count != len(users):
+                    if user != user_list[-1] or count != len(users):
                         t = random.randint(interval_time[0],interval_time[1])
                         print('稍等{}s...'.format(t))
                         time.sleep(t) #wait for 20-50s by default
