@@ -201,13 +201,13 @@ class JLU_Helper:
             __ = self.browser.find_element_by_xpath("//span[contains(text(),'{}')]".format(kw[1])) #'If you have anything to comment,please click'
         except: #abnormal
             try:
-                _ = self.browser.find_element_by_xpath("//div[contains(text(),'This field is required')]")
+                _ = self.browser.find_element_by_xpath("//div[contains(text(),'{}')]".format(kw[0]))
                 print('Warning:信息不完整，正在补充...')
                 self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[2])).click() #'Ok'
                 self.fill_in_morning()
                 #refill the degree,when a user submit with phone in the morning while use DBM in the rest time
                 time.sleep(self.__pause_time)
-            except NoSuchElementException:
+            except:
                 print('Warning:提交显示异常，刷新页面...')
                 self.browser.refresh()
                 time.sleep(self.__pause_time)
@@ -215,11 +215,12 @@ class JLU_Helper:
             try:
                 self.browser.find_element_by_class_name('command_button_content').click()
                 time.sleep(self.__pause_time)
-            except NoSuchElementException:
+            except:
                 print('Error:提交显示异常,用户{}打卡失败'.format(self.__user['account']))
                 self.status = False
                 self.browser.quit()
                 return
+
 
         try: #still have problem
             __ = self.browser.find_element_by_xpath("//span[contains(text(),'{}')]".format(kw[1])) #'If you have anything to comment,please click'
