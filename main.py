@@ -9,8 +9,8 @@ import random
 import argparse
 
 key_words = {
-    'Chinese':['登录成功','如有其它相关说明，请点击','确定','好','办理成功','确定'],
-    'English':['登录成功','If you have anything to comment,please click','Ok','Ok','Done successfully!','Ok']
+    'Chinese':['此项必须填写','如有其它相关说明，请点击','确定','好','办理成功','确定'],
+    'English':['This field is required','If you have anything to comment,please click','Ok','Ok','Done successfully!','Ok']
 }
 
 
@@ -39,7 +39,7 @@ def filling_process(user_info):
 def main():
     parser = argparse.ArgumentParser(description="JLU helper keeps bothers away from you.")
     parser.add_argument(
-        "--skip_wait",  #fill in from scratch
+        "--skip",  #fill in from scratch
         action='store_true',
         default=False,
     )
@@ -49,7 +49,7 @@ def main():
         default=True,
     )
     args = parser.parse_args()
-    is_finished = args.skip_wait
+    is_finished = args.skip
     wait = args.do_now
     while True:
         localtime_hour = timer(only_hour=True)
@@ -89,7 +89,7 @@ def main():
 
             is_finished = True
             lt = timer()
-            print('本次填报结束,结束于',lt)
+            print('\n本次填报结束,结束于',lt)
             print('共有{}个用户，{}人打卡成功'.format(len(users),count))
         lt = timer()
         print('当前时间是{},休眠10分钟...'.format(lt))
