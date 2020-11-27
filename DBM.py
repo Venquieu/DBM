@@ -179,7 +179,7 @@ class JLU_Helper:
         localtime = int(localtime.split(':')[0])
         if 6<=localtime<12: #morning
             self.fill_in_morning()
-        elif 21<=localtime<23: #night
+        elif 20<=localtime<24: #night
             self.fill_in_night()
         else: # later for fill in
             print('Error:用户{}打卡迟到了(´༎ຶٹ༎ຶ`)'.format(self.__user['account']))

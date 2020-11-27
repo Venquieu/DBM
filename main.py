@@ -24,7 +24,7 @@ def timer(only_hour = False):
 
 def is_filling_time(local_hour):
     '''Judge if it is a filling time'''
-    if (local_hour in range(6,12)) or (local_hour in range(21,23)):
+    if (local_hour in range(6,12)) or (local_hour in range(20,24)):
         return True
     return False
 
