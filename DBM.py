@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait,Select
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import TimeoutException,NoSuchElementException
+from selenium.common.exceptions import TimeoutException,NoSuchElementException,ElementNotVisibleException
 import time
 
 class JLU_Helper:
@@ -219,13 +219,15 @@ class JLU_Helper:
         time.sleep(self.__pause_time)
 
         try:
-            submit = self.browser.find_element_by_class_name('command_button_content')
-            submit.click()
+            self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+            submit = self.browser.find_elements_by_xpath("//nobr[text()='提交']")
+            submit[-1].click()
         except:
             print('打卡页面加载超时，用户{}打卡失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
+
         time.sleep(2*self.__pause_time)
 
         try: #ensure all info is filled
@@ -244,14 +246,19 @@ class JLU_Helper:
                 time.sleep(self.__pause_time)
             
             try:
-                self.browser.find_element_by_class_name('command_button_content').click()
-                time.sleep(self.__pause_time)
+                self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+                submit = self.browser.find_elements_by_xpath("//nobr[text()='提交']")
+                for submit_button in submit:
+                    try:
+                        submit_button.click()
+                        break
+                    except ElementNotVisibleException:
+                        continue
             except:
                 print('Error:提交显示异常,用户{}打卡失败'.format(self.__user['account']))
                 self.status = False
                 self.browser.quit()
                 return
-
 
         try: #still have problem
             __ = self.browser.find_element_by_xpath("//span[contains(text(),'{}')]".format(kw[1])) #'If you have anything to comment,please click'
