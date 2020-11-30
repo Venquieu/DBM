@@ -75,9 +75,15 @@ class JLU_Helper:
         if self.status:
             print('用户{}登录成功!'.format(self.__user['account']))
         
+    def fill_info(self):
+        '''
+        Fill in the user information,as the system upgrade,there is no need for this matter any more
+        '''
+        info_length = len(self.__user.items())
+        if info_length not in [8,11]:
+            print('Error:请为用户{}提供完整信息,本次打卡失败'.format(self.__user['account']))
+            return False
 
-    def fill_in_morning(self):
-        '''Fill in the 1st login for the day,time is 07:01-08:00'''
         pf = self.browser.find_element_by_id('V1_CTRL40')
         pf.clear()
         time.sleep(self.__pause_time)
@@ -112,13 +118,13 @@ class JLU_Helper:
             pf = self.browser.find_element_by_id('V1_CTRL39')
             pf.clear()
             pf.send_keys(self.__user['address'])
-            time.sleep(self.__pause_time)
         else:
             #room
             pf = self.browser.find_element_by_id('V1_CTRL8')
             pf.clear()
             pf.send_keys(self.__user['room'])
-            time.sleep(self.__pause_time)
+        time.sleep(self.__pause_time)
+        
         #degree
         if self.__user['degree'] == '硕士':
             self.browser.find_element_by_id('V1_CTRL44').click()
@@ -130,19 +136,34 @@ class JLU_Helper:
             self.browser.quit()
             return
         time.sleep(self.__pause_time)
+        return True
+
+    def fill_in_morning(self,fill_info = False):
+        '''Fill in the 1st login for the day,time is 06:01-12:00'''
+        if fill_info:
+            is_success = self.fill_info()
+            if not is_success:
+                return False
         #body temperature
         self.browser.find_element_by_id('V1_CTRL28').click()
+        return True
         
     def fill_in_noon(self):
-        '''Fill in the 2nd login for the day,time is 11:01-12:00'''
+        '''
+        This function is eliminated due to the system update.\n
+        Original description:
+            Fill in the 2nd login for the day,time is 11:01-12:00'''
         self.browser.find_element_by_id('V1_CTRL19').click()
         
     def fill_in_evening(self):
-        '''Fill in the 3rd login for the day,time is 17:01-18:00'''
+        '''
+        This function is eliminated due to the system update.\n
+        Original description:
+            Fill in the 3rd login for the day,time is 17:01-18:00'''
         self.browser.find_element_by_id('V1_CTRL23').click()
  
     def fill_in_night(self):
-        '''Fill in the 4th login for the day,time is 21:01-22:00'''
+        '''Login in and submit for the day,time is 20:01-24:00'''
         #self.browser.find_element_by_id('V1_CTRL23').click()
         pass
 
@@ -163,6 +184,11 @@ class JLU_Helper:
         try:
             __ = self.browser.find_element_by_xpath("//title[contains(text(),'研究生每日打卡')]")
         except TimeoutException:
+            print('Error:打卡页面连接超时,用户{}登录失败'.format(self.__user['account']))
+            self.status = False
+            self.browser.quit()
+            return
+        except NoSuchElementException:
             print('Error:打卡页面显示异常,用户{}登录失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
@@ -178,7 +204,11 @@ class JLU_Helper:
         localtime = localtime.split(' ')[-2]
         localtime = int(localtime.split(':')[0])
         if 6<=localtime<12: #morning
-            self.fill_in_morning()
+            is_success = self.fill_in_morning()
+            if not is_success:
+                self.status = False
+                self.browser.quit()
+                return
         elif 20<=localtime<24: #night
             self.fill_in_night()
         else: # later for fill in
@@ -187,6 +217,7 @@ class JLU_Helper:
             self.browser.quit()
             return
         time.sleep(self.__pause_time)
+
         try:
             submit = self.browser.find_element_by_class_name('command_button_content')
             submit.click()
@@ -204,7 +235,7 @@ class JLU_Helper:
                 _ = self.browser.find_element_by_xpath("//div[contains(text(),'{}')]".format(kw[0]))
                 print('Warning:信息不完整，正在补充...')
                 self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[2])).click() #'Ok'
-                self.fill_in_morning()
+                self.fill_info()
                 #refill the degree,when a user submit with phone in the morning while use DBM in the rest time
                 time.sleep(self.__pause_time)
             except:
@@ -227,16 +258,18 @@ class JLU_Helper:
         except: #abnormal
             print('Error:提交时加载超时,用户{}打卡失败'.format(self.__user['account']))
             self.status = False
+            self.browser.quit()
             return
         self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[3])).click() #Ok
         time.sleep(self.__pause_time)
 
         try:
             __ = self.browser.find_element_by_xpath("//div[contains(text(),'{}')]".format(kw[4]))#'Done successfully!'
-            time.sleep(self.__pause_time)
+            time.sleep(2*self.__pause_time)
         except: #Submission fail
             print('Error:提交确认时加载超时,用户{}打卡失败'.format(self.__user['account']))
             self.status = False
+            self.browser.quit()
             return
 
         if self.status:
@@ -246,6 +279,5 @@ class JLU_Helper:
             confirm.click()
         except:
             print('Warning:确认异常')
-            return
         time.sleep(4*self.__pause_time)
         self.browser.quit() #quit the browser

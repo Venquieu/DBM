@@ -79,7 +79,8 @@ def main():
                     if status: #user status
                         count += 1
                     else:
-                        failed_list.append(user)
+                        if len(user.items()) in [8,11]:
+                            failed_list.append(user)
 
                     if user != user_list[-1] or count != len(users):
                         t = random.randint(interval_time[0],interval_time[1])
