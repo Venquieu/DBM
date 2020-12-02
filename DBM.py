@@ -182,7 +182,7 @@ class JLU_Helper:
             return
 
         try:
-            __ = self.browser.find_element_by_xpath("//title[contains(text(),'研究生每日打卡')]")
+            __ = self.browser.find_element_by_xpath("//title[contains(text(),'研究生每日健康打卡')]")
         except TimeoutException:
             print('Error:打卡页面连接超时,用户{}登录失败'.format(self.__user['account']))
             self.status = False
