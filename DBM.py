@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait,Select
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException,NoSuchElementException,ElementNotVisibleException
 import time
 
@@ -21,11 +22,14 @@ class JLU_Helper:
         self.__pause_time = pause_time
         self.__language = 'Chinese'
         self.status = True
-        options = webdriver.ChromeOptions()
-        options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2}) # Don't load images to ensure a high speed
-        options.add_experimental_option('excludeSwitches', ['enable-automation']) # set to developer mode to avoid recognised
 
-        self.browser = webdriver.Chrome(options=options)
+        chrome_options = Options()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('blink-settings=imagesEnabled=false') # Don't load images to ensure a high speed
+        chrome_options.add_experimental_option('excludeSwitches', ['enable-automation']) # set to developer mode to avoid recognised
+
+        self.browser = webdriver.Chrome(options=chrome_options)
         self.browser.set_page_load_timeout(30)
         self.browser.set_script_timeout(30)
         self.browser.implicitly_wait(32)
@@ -184,12 +188,12 @@ class JLU_Helper:
         try:
             __ = self.browser.find_element_by_xpath("//title[contains(text(),'研究生每日健康打卡')]")
         except TimeoutException:
-            print('Error:打卡页面连接超时,用户{}登录失败'.format(self.__user['account']))
+            print('Error:打卡页面连接超时,用户{}打卡失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
         except NoSuchElementException:
-            print('Error:打卡页面显示异常,用户{}登录失败'.format(self.__user['account']))
+            print('Error:打卡页面显示异常,用户{}打卡失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
@@ -272,7 +276,7 @@ class JLU_Helper:
 
         try:
             __ = self.browser.find_element_by_xpath("//div[contains(text(),'{}')]".format(kw[4]))#'Done successfully!'
-            time.sleep(2*self.__pause_time)
+            time.sleep(3*self.__pause_time)
         except: #Submission fail
             print('Error:提交确认时加载超时,用户{}打卡失败'.format(self.__user['account']))
             self.status = False

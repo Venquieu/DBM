@@ -24,6 +24,8 @@ DBM制作了一个自动打卡工具，用户只需设置好自己的信息并�
 
 系统升级导致打卡助手无法正确识别打卡页面并报错`Error:打卡页面显示异常`，已修复此问题。(2020/12/2)
 
+修复错误`selenium.common.exceptions.WebDriverException: Message: unknown error: DevToolsActivePort file doesn't exist`。(2020/12/13)
+
 ## 安装
 
 小助手须在PC端python环境下运行，运行前需安装：
