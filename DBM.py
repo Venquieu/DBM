@@ -71,7 +71,11 @@ class JLU_Helper:
         try:
             __ = self.browser.find_element_by_xpath("//title[contains(text(),'吉林大学')]")
         except : #Not find 
-            print('Error:登录系统显示异常,用户{}登录失败'.format(self.__user['account']))
+            try:
+                self.browser.find_elements_by_xpath("//div[contains(text(),'密码错误')]")
+                print('用户{}密码错误,登录失败'.format(self.__user['account']))
+            except:
+                print('Error:登录系统显示异常,用户{}登录失败'.format(self.__user['account']))
             self.status = False
             self.browser.quit()
             return
@@ -83,10 +87,10 @@ class JLU_Helper:
         '''
         Fill in the user information,as the system upgrade,there is no need for this matter any more
         '''
-        info_length = len(self.__user.items())
-        if info_length not in [8,11]:
-            print('Error:请为用户{}提供完整信息,本次打卡失败'.format(self.__user['account']))
-            return False
+        #info_length = len(self.__user.items())
+        #if info_length not in [8,20]:
+        #    print('Error:请为用户{}提供完整信息,本次打卡失败'.format(self.__user['account']))
+        #    return False
 
         pf = self.browser.find_element_by_id('V1_CTRL40')
         pf.clear()
@@ -101,34 +105,55 @@ class JLU_Helper:
         select = Select(self.browser.find_element_by_id('V1_CTRL42'))
         select.select_by_visible_text(self.__user['campus'])
         time.sleep(self.__pause_time)
-        #apartment
-        select = Select(self.browser.find_element_by_id('V1_CTRL7'))
-        select.select_by_visible_text(self.__user['apartment'])
+        #phone number
+        phone = self.browser.find_element_by_id('V1_CTRL67')
+        phone.clear()
         time.sleep(self.__pause_time)
-
-        if self.__user['apartment'] == '校外居住':
+        phone.send_keys(self.__user['phone'])
+        time.sleep(self.__pause_time)
+        #instructor
+        ins = self.browser.find_element_by_xpath("//input[contains(@id,'_activeInput')]")
+        ins.send_keys(self.__user['instructor'])
+        time.sleep(self.__pause_time)
+        ins.send_keys(Keys.ENTER)
+        time.sleep(self.__pause_time)
+        #location
+        if self.__user['at_school']:
+            self.browser.find_element_by_id('V1_CTRL63').click()
+            time.sleep(2*self.__pause_time)
+            select = Select(self.browser.find_element_by_id('V1_CTRL46'))
+            select.select_by_visible_text('在校实习实训实验')
+            time.sleep(self.__pause_time)
+            #apartment
+            select = Select(self.browser.find_element_by_id('V1_CTRL7'))
+            select.select_by_visible_text(self.__user['apartment'])
+            time.sleep(self.__pause_time)
+            #room
+            room = self.browser.find_element_by_id('V1_CTRL8')
+            room.clear()
+            room.send_keys(self.__user['room'])
+        else:
+            self.browser.find_element_by_id('V1_CTRL64').click()
+            time.sleep(2*self.__pause_time)
+            select = Select(self.browser.find_element_by_id('V1_CTRL47'))
+            select.select_by_visible_text('放假回家')
+            time.sleep(self.__pause_time)
             #province
             elements = self.browser.find_elements_by_xpath("//input[contains(@id,'_activeInput')]")
-            assert len(elements) == 3,"Didn't find enough selection"
+            assert len(elements) == 4,"Didn't find enough selection"
             kw = ['province','city','area']
-            for i in range(len(elements)):
+            for i in range(1, len(elements)):
                 element = elements[i]
-                element.send_keys(self.__user[kw[i]])
+                element.send_keys(self.__user[kw[i-1]])
                 time.sleep(self.__pause_time)
                 element.send_keys(Keys.ENTER)
                 time.sleep(self.__pause_time)
-
             #address
             pf = self.browser.find_element_by_id('V1_CTRL39')
             pf.clear()
             pf.send_keys(self.__user['address'])
-        else:
-            #room
-            pf = self.browser.find_element_by_id('V1_CTRL8')
-            pf.clear()
-            pf.send_keys(self.__user['room'])
-        time.sleep(self.__pause_time)
-        
+            time.sleep(self.__pause_time)
+                    
         #degree
         if self.__user['degree'] == '硕士':
             self.browser.find_element_by_id('V1_CTRL44').click()
@@ -220,7 +245,7 @@ class JLU_Helper:
             self.status = False
             self.browser.quit()
             return
-        time.sleep(self.__pause_time)
+        time.sleep(2*self.__pause_time)
 
         try:
             self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")

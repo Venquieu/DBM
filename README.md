@@ -26,6 +26,8 @@ DBM制作了一个自动打卡工具，用户只需设置好自己的信息并�
 
 修复错误`selenium.common.exceptions.WebDriverException: Message: unknown error: DevToolsActivePort file doesn't exist`。(2020/12/13)
 
+针对系统更新的打卡助手升级，元打卡助手已无法使用，添加补充手机号、辅导员等信息，能满足在校时的打卡需求。(2021/1/6)
+
 ## 安装
 
 小助手须在PC端python环境下运行，运行前需安装：
@@ -134,30 +136,25 @@ users = [
             'profession':'profession1',#专业
             'grade':'grade1',#年级(2019/2020/...)
             'campus':'campus1',#校区
+            'phone':'number',#手机号
+            'instructor':'name', #辅导员
+            'at_school':True, #是否在校
             'apartment':'apartment1',#公寓
             'room':'room1',#寝室号
             'degree':'degree1'#学位(硕士/博士)
+            'province':'province1', #省
+            'city':'city1', #市
+            'area':'area1', #区
+            'address':'address1', #具体地址
         }, 
-        #走读
-        {
-            'account':'account2',  #账户
-            'pw':'pw2',    #密码
-            'profession':'profession2', #专业
-            'grade':'grade2', #年级
-            'campus':'campus2', #校区
-            'apartment':'apartment2', #填 校外居住
-            'province':'province2', #省
-            'city':'city2', #市
-            'area':'area2', #区
-            'address':'address2', #具体地址
-            'degree':'degree2' #学位(硕士/博士)
-        }
         #You can add more here
     ]
 ```
 
-2. `UserSetting.py`中的```pause_time```表示每次操作后的停顿时间，默认为1s，用户可根据偏好或需求自行调整
+如果在校将`at_school`设置为`True`，否则设置为`False`。
 
+
+2. `UserSetting.py`中的```pause_time```表示每次操作后的停顿时间，默认为1s，用户可根据偏好或需求自行调整
 3. 在python编译器或在命令行运行main.py，若处于打卡时段，默认从该时段开始为用户打卡
 
 

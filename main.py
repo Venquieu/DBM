@@ -74,6 +74,7 @@ def main():
                 for  user in user_list:
                     print('**************************************************')
                     lt = timer()
+                    #user = user_list[-2]
                     print('于{}开始为用户{}填报...'.format(lt,user['account']))
                     status = filling_process(user)
                     if status: #user status
@@ -90,8 +91,8 @@ def main():
 
             is_finished = True
             lt = timer()
-            print('\n本次填报结束,结束于',lt)
-            print('共有{}个用户，{}人打卡成功'.format(len(users),count))
+            print('本次填报结束,结束于',lt)
+            print('共有{}个用户，{}人打卡成功\n'.format(len(users),count))
         lt = timer()
         print('当前时间是{},休眠10分钟...'.format(lt))
         time.sleep(600) #scan per 5min
