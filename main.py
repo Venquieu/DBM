@@ -24,7 +24,12 @@ def timer(only_hour = False):
 
 def is_filling_time(local_hour):
     '''Judge if it is a filling time'''
-    if (local_hour in range(6,12)) or (local_hour in range(20,24)):
+    if (local_hour in range(6,10)) or (local_hour in range(20,22)):
+        return True
+    return False
+
+def is_morning_time(local_hour):
+    if (local_hour in range(6,10)):
         return True
     return False
 
@@ -63,9 +68,17 @@ def main():
             else:
                 wait = True
 
+            if is_morning_time(timer(only_hour=True)):
+                user_list = users
+            else:
+                user_list = []
+                for user in users:
+                    if user['at_school']:
+                        user_list.append(user)
+            total_users = len(user_list) 
             count = 0 # count number of user who filling succeed
             batch = 0 # filling batch
-            user_list = users
+            
             while len(user_list) > 0 and is_filling_time(timer(only_hour=True)):
                 batch += 1
                 failed_list = []
@@ -92,7 +105,7 @@ def main():
             is_finished = True
             lt = timer()
             print('本次填报结束,结束于',lt)
-            print('共有{}个用户，{}人打卡成功\n'.format(len(users),count))
+            print('本次共有{}个用户，{}人打卡成功\n'.format(total_users,count))
         lt = timer()
         print('当前时间是{},休眠10分钟...'.format(lt))
         time.sleep(600) #scan per 5min

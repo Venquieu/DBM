@@ -26,7 +26,9 @@ DBM制作了一个自动打卡工具，用户只需设置好自己的信息并�
 
 修复错误`selenium.common.exceptions.WebDriverException: Message: unknown error: DevToolsActivePort file doesn't exist`。(2020/12/13)
 
-针对系统更新的打卡助手升级，元打卡助手已无法使用，添加补充手机号、辅导员等信息，能满足在校时的打卡需求。(2021/1/6)
+针对系统更新的打卡助手升级，原打卡助手已无法使用，添加补充手机号、辅导员等信息，能满足在校时的打卡需求。(2021/1/6)
+
+为在家时的打卡添加支持，但本系统不再提供离校情况下的自动信息补充(省、市、区等信息)，具体参见**使用部分**；同时修复若干显示问题。(2021/1/19)
 
 ## 安装
 
@@ -116,15 +118,17 @@ google-chrome --version #查看chrome浏览器版本
            {
                'name':'name1',#账户,邮箱前缀
                'pw':'pw1',#密码
+               'at_school':False #是否在校
            }, 
            {
                'account':'account2',  #账户,邮箱前缀
                'pw':'pw2',    #密码
+               'at_school':False #是否在校
            }
            #You can add more here
-       ]
+    ]
    ```
-
+   
    在一些特定情况下可能会提示`Error：请为用户xxx提供完整信息,本次打卡失败`，若出现这种情况，请按照如下格式为用户xxx填写信息：
 
 ```
@@ -151,7 +155,7 @@ users = [
     ]
 ```
 
-如果在校将`at_school`设置为`True`，否则设置为`False`。
+如果在校将`at_school`设置为`True`，否则设置为`False`。需要注意的是**由于小助手不再支持离校后信息填写，离校后第一天需要用户手动打卡，并将`at_school`设置为`False`**。
 
 
 2. `UserSetting.py`中的```pause_time```表示每次操作后的停顿时间，默认为1s，用户可根据偏好或需求自行调整
