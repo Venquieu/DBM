@@ -125,11 +125,6 @@ google-chrome --version #查看chrome浏览器版本
                'pw':'pw1',#密码
                'at_school':False #是否在校
            }, 
-           {
-               'account':'account2',  #账户,邮箱前缀
-               'pw':'pw2',    #密码
-               'at_school':False #是否在校
-           }
            #You can add more here
     ]
    ```
@@ -145,10 +140,14 @@ users = [
             'profession':'profession1',#专业
             'grade':'grade1',#年级(2019/2020/...)
             'campus':'campus1',#校区
+            'phone':'number',#手机号
+            'instructor':'王鑫', #辅导员
+            'at_school':True, #在校
             'apartment':'apartment1',#公寓
             'room':'room1',#寝室号
             'degree':'degree1'#学位(硕士/博士)
-        }
+        },
+    	#You can add more here
 	]
 ```
 

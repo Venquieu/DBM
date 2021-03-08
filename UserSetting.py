@@ -11,21 +11,22 @@ interval_time = [20,50]
 # 在这里输入用户信息
 users = [
         {
-            'name':'name1',#账户
+            'name':'name1',#账户,邮箱前缀
             'pw':'pw1',#密码
-            'profession':'profession1',#专业
-            'grade':'grade1',#年级
-            'campus':'campus1',#校区
+            'at_school':False #是否在校
+        }, 
+        {
+            'name':'name2',#账户
+            'pw':'pw2',#密码
+            'profession':'profession2',#专业
+            'grade':'grade2',#年级
+            'campus':'campus2',#校区
             'phone':'number',#手机号
-            'instructor':'王鑫', #辅导员
+            'instructor':'name', #辅导员
             'at_school':True,
-            'apartment':'apartment1',#公寓
-            'room':'room1',#寝室号
-            'degree':'degree1'#学位(硕士/博士)
-            'province':'province1', #省
-            'city':'city1', #市
-            'area':'area1', #区
-            'address':'address1', #具体地址
+            'apartment':'apartment2',#公寓
+            'room':'room2',#寝室号
+            'degree':'degree2'#学位(硕士/博士)
         }, 
         #You can add more here
     ]
