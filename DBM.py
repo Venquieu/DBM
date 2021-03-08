@@ -87,11 +87,13 @@ class JLU_Helper:
         '''
         Fill in the user information,as the system upgrade,there is no need for this matter any more
         '''
-        #info_length = len(self.__user.items())
-        #if info_length not in [8,20]:
-        #    print('Error:请为用户{}提供完整信息,本次打卡失败'.format(self.__user['account']))
-        #    return False
-
+        try:
+            _ = self.__user['profession']
+        except KeyError:
+            print('Error：用户{}打卡失败,请为用户提供完整信息'.format(self.__user['account']))
+            self.status = False
+            self.browser.quit()
+            return
         pf = self.browser.find_element_by_id('V1_CTRL40')
         pf.clear()
         time.sleep(self.__pause_time)
@@ -133,27 +135,10 @@ class JLU_Helper:
             room.clear()
             room.send_keys(self.__user['room'])
         else:
-            self.browser.find_element_by_id('V1_CTRL64').click()
-            time.sleep(2*self.__pause_time)
-            select = Select(self.browser.find_element_by_id('V1_CTRL47'))
-            select.select_by_visible_text('放假回家')
-            time.sleep(self.__pause_time)
-            #province
-            elements = self.browser.find_elements_by_xpath("//input[contains(@id,'_activeInput')]")
-            assert len(elements) == 4,"Didn't find enough selection"
-            kw = ['province','city','area']
-            for i in range(1, len(elements)):
-                element = elements[i]
-                element.send_keys(self.__user[kw[i-1]])
-                time.sleep(self.__pause_time)
-                element.send_keys(Keys.ENTER)
-                time.sleep(self.__pause_time)
-            #address
-            pf = self.browser.find_element_by_id('V1_CTRL39')
-            pf.clear()
-            pf.send_keys(self.__user['address'])
-            time.sleep(self.__pause_time)
-                    
+            print('Error:暂不支持校外打卡内容填充,请手动完成！用户{}登录失败'.format(self.__user['account']))
+            self.status = False
+            self.browser.quit()
+            return
         #degree
         if self.__user['degree'] == '硕士':
             self.browser.find_element_by_id('V1_CTRL44').click()
@@ -196,7 +181,7 @@ class JLU_Helper:
         #self.browser.find_element_by_id('V1_CTRL23').click()
         pass
 
-    def auto_fill_in(self):
+    def auto_fill_in(self, fill_info):
         """
         auto judge time to fill in
         """
@@ -233,7 +218,7 @@ class JLU_Helper:
         localtime = localtime.split(' ')[-2]
         localtime = int(localtime.split(':')[0])
         if 6<=localtime<12: #morning
-            is_success = self.fill_in_morning()
+            is_success = self.fill_in_morning(fill_info)
             if not is_success:
                 self.status = False
                 self.browser.quit()
@@ -314,6 +299,6 @@ class JLU_Helper:
             confirm = self.browser.find_element_by_xpath("//button[contains(text(),'{}')]".format(kw[5])) #Ok
             confirm.click()
         except:
-            print('Warning:确认异常')
+            print('Warning:确认超时')
         time.sleep(4*self.__pause_time)
         self.browser.quit() #quit the browser

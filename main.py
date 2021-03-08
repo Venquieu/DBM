@@ -24,27 +24,27 @@ def timer(only_hour = False):
 
 def is_filling_time(local_hour):
     '''Judge if it is a filling time'''
-    if (local_hour in range(6,10)) or (local_hour in range(20,22)):
+    if (local_hour in range(7,12)) or (local_hour in range(20,22)):
         return True
     return False
 
 def is_morning_time(local_hour):
-    if (local_hour in range(6,10)):
+    if (local_hour in range(6,12)):
         return True
     return False
 
-def filling_process(user_info):
+def filling_process(user_info, fill_info = False):
     '''filling process for user'''
     helper = JLU_Helper(user_info,key_words,pause_time=pause_time)
     helper.login()
     time.sleep(2*pause_time)
-    helper.auto_fill_in()
+    helper.auto_fill_in(fill_info)
     return helper.status
 
 def main():
     parser = argparse.ArgumentParser(description="JLU helper keeps bothers away from you.")
     parser.add_argument(
-        "--skip",  #fill in from scratch
+        "--skip",  #skip this time
         action='store_true',
         default=False,
     )
@@ -53,9 +53,16 @@ def main():
         action='store_false',
         default=True,
     )
+    parser.add_argument(
+        "--fill",  #fill in from scratch
+        action='store_true',
+        default=False,
+    )
     args = parser.parse_args()
     is_finished = args.skip
     wait = args.do_now
+    is_fill = args.fill
+
     while True:
         localtime_hour = timer(only_hour=True)
         if not is_filling_time(localtime_hour):
@@ -89,12 +96,11 @@ def main():
                     lt = timer()
                     #user = user_list[-2]
                     print('于{}开始为用户{}填报...'.format(lt,user['account']))
-                    status = filling_process(user)
+                    status = filling_process(user, fill_info = is_fill)
                     if status: #user status
                         count += 1
                     else:
-                        if len(user.items()) in [8,11]:
-                            failed_list.append(user)
+                        failed_list.append(user)
 
                     if user != user_list[-1] or count != len(users):
                         t = random.randint(interval_time[0],interval_time[1])
