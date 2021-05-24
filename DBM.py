@@ -116,7 +116,7 @@ class JLU_Helper:
         #instructor
         ins = self.browser.find_element_by_xpath("//input[contains(@id,'_activeInput')]")
         ins.send_keys(self.__user['instructor'])
-        time.sleep(self.__pause_time)
+        time.sleep(3*self.__pause_time)
         ins.send_keys(Keys.ENTER)
         time.sleep(self.__pause_time)
         #location
