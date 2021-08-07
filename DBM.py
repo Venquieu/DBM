@@ -158,6 +158,7 @@ class JLU_Helper:
             is_success = self.fill_info()
             if not is_success:
                 return False
+        self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
         #body temperature
         self.browser.find_element_by_id('V1_CTRL28').click()
         return True
@@ -174,6 +175,7 @@ class JLU_Helper:
         This function is eliminated due to the system update.\n
         Original description:
             Fill in the 3rd login for the day,time is 17:01-18:00'''
+        self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
         self.browser.find_element_by_id('V1_CTRL23').click()
  
     def fill_in_night(self):
@@ -233,7 +235,6 @@ class JLU_Helper:
         time.sleep(2*self.__pause_time)
 
         try:
-            self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
             submit = self.browser.find_elements_by_xpath("//nobr[text()='提交']")
             submit[-1].click()
         except:
@@ -260,7 +261,6 @@ class JLU_Helper:
                 time.sleep(self.__pause_time)
             
             try:
-                self.browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
                 submit = self.browser.find_elements_by_xpath("//nobr[text()='提交']")
                 for submit_button in submit:
                     try:
