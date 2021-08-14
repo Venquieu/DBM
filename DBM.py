@@ -15,7 +15,7 @@ class JLU_Helper:
     class JLU_Helper is the backbone of DBM,which can help guaduate students in JLU fill in&submit the system automatically
     '''
     def __init__(self,user_data,key_words,pause_time = 1):
-        self.__login_url = 'https://ehall.jlu.edu.cn/jlu_portal/index'
+        self.__login_url = 'https://ehall.jlu.edu.cn'
         self.__request_url = 'https://ehall.jlu.edu.cn/infoplus/form/YJSMRDK/start'
         self.__user = user_data
         self.__kw = key_words
@@ -68,8 +68,9 @@ class JLU_Helper:
             self.status = False
             self.browser.quit()
             return
+
         try:
-            __ = self.browser.find_element_by_xpath("//title[contains(text(),'吉林大学')]")
+            __ = self.browser.find_element_by_xpath("//title[contains(text(),'办事大厅')]")
         except : #Not find 
             try:
                 self.browser.find_elements_by_xpath("//div[contains(text(),'密码错误')]")
